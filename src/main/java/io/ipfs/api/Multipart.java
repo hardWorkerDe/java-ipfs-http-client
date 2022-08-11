@@ -12,7 +12,7 @@ public class Multipart {
     private String charset;
     private OutputStream out;
 
-    public Multipart(String requestURL, String charset) {
+    public Multipart(String requestURL, String charset, Map<String, String> headers) {
         this.charset = charset;
 
         boundary = createBoundary();
@@ -26,6 +26,11 @@ public class Multipart {
             httpConn.setRequestProperty("Expect", "100-continue");
             httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
             httpConn.setRequestProperty("User-Agent", "Java IPFS CLient");
+
+            for (String key : headers.keySet()) {
+                httpConn.setRequestProperty(key, headers.get(key));
+            }
+
             out = httpConn.getOutputStream();
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
